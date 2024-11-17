@@ -30,7 +30,7 @@ const config = {
     cookie: {
       domain: "https://jobfindr-q1cl.onrender.com", // Adjust based on your domain
       secure: true,
-      sameSite: "none",
+      sameSite: "None",
     },
   },
 };
