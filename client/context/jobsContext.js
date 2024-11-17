@@ -59,13 +59,9 @@ export const JobsContextProvider = ({ children }) => {
       setJobs((prevJobs) => [res.data, ...prevJobs]);
 
       // update userJobs
-
       if (userProfile._id) {
         setUserJobs((prevUserJobs) => [res.data, ...prevUserJobs]);
-        getUserProfile(auth0User.sub);
       }
-
-      getUserJobs(userProfile._id);
 
       // redirect to the job details page
       router.push(`/job/${res.data._id}`);
@@ -184,14 +180,19 @@ export const JobsContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    getUserProfile(auth0User.sub);
+  }, [jobs.length]);
+
+  useEffect(() => {
     getJobs();
   }, []);
 
   useEffect(() => {
     if (userProfile._id) {
       getUserJobs(userProfile._id);
+      getUserProfile(auth0User.sub);
     }
-  }, [userProfile]);
+  }, [userProfile._id]);
 
   return (
     <JobsContext.Provider
