@@ -7,6 +7,7 @@ import connect from "./db/connect.js";
 import asyncHandler from "express-async-handler";
 import fs from "fs";
 import User from "./models/UserModel.js";
+import { log } from "console";
 dotenv.config();
 
 const app = express();
@@ -21,12 +22,12 @@ const config = {
   routes: {
     postLogoutRedirect: process.env.CLIENT_URL,
     callback: "/callback",
-    login: "/login",
     logout: "/logout",
-    callback: "/callback",
+    login: "/login",
   },
+
   session: {
-    absoluteDuration: 24 * 60 * 60, // 24 hours
+    absoluteDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
     cookie: {
       domain: "jobfindr-q1cl.onrender.com",
       secure: true,
@@ -38,7 +39,6 @@ const config = {
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
-    credentials: true,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
