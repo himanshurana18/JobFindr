@@ -20,6 +20,7 @@ const config = {
   issuerBaseURL: process.env.ISSUER_BASE_URL,
   routes: {
     postLogoutRedirect: process.env.CLIENT_URL,
+    callback: "/callback",
   },
 };
 
