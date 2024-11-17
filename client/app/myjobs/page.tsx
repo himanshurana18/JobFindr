@@ -26,7 +26,7 @@ function page() {
   }, [isAuthenticated]);
 
   const likedJobs = jobs.filter((job: Job) => {
-    return job.applicants.includes(userId);
+    return job.likes.includes(userId);
   });
 
   if (loading) {
