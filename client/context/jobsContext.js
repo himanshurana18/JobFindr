@@ -10,7 +10,7 @@ axios.defaults.baseURL = "https://jobfindr-q1cl.onrender.com";
 axios.defaults.withCredentials = true;
 
 export const JobsContextProvider = ({ children }) => {
-  const { userProfile } = useGlobalContext();
+  const { userProfile, getUserProfile, auth0User } = useGlobalContext();
   const router = useRouter();
 
   const [jobs, setJobs] = useState([]);
@@ -62,12 +62,13 @@ export const JobsContextProvider = ({ children }) => {
 
       if (userProfile._id) {
         setUserJobs((prevUserJobs) => [res.data, ...prevUserJobs]);
+        getUserProfile(auth0User.sub);
       }
 
       getUserJobs(userProfile._id);
 
       // redirect to the job details page
-      router.push(`/jobs/${res.data._id}`);
+      router.push(`/job/${res.data._id}`);
     } catch (error) {
       console.log("Error creating job", error);
     }
