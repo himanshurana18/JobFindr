@@ -100,10 +100,9 @@ export const getJobsByUser = asyncHandler(async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const jobs = await Job.find({ createdBy: user._id }).populate(
-      "createdBy",
-      "name profilePicture"
-    );
+    const jobs = await Job.find({ createdBy: user._id })
+      .populate("createdBy", "name profilePicture")
+      .sort({ createdAt: -1 });
 
     return res.status(200).json(jobs);
   } catch (error) {
