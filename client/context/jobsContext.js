@@ -10,8 +10,7 @@ axios.defaults.baseURL = "https://jobfindr-q1cl.onrender.com";
 axios.defaults.withCredentials = true;
 
 export const JobsContextProvider = ({ children }) => {
-  const { userProfile, getUserProfile, auth0User, isAuthenticated } =
-    useGlobalContext();
+  const { userProfile, getUserProfile } = useGlobalContext();
   const router = useRouter();
 
   const [jobs, setJobs] = useState([]);
@@ -181,20 +180,13 @@ export const JobsContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    getUserProfile(auth0User.sub);
-  }, [jobs.length]);
-
-  useEffect(() => {
     getJobs();
   }, []);
 
   useEffect(() => {
     if (userProfile._id) {
       getUserJobs(userProfile._id);
-    }
-
-    if (isAuthenticated && auth0User) {
-      getUserProfile(auth0User.sub);
+      getUserProfile(userProfile.auth0Id);
     }
   }, [userProfile._id]);
 
