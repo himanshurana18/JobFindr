@@ -15,7 +15,7 @@ interface JobProps {
 }
 
 function MyJob({ job }: JobProps) {
-  const { deleteJob } = useJobsContext();
+  const { deleteJob, userProfile } = useJobsContext();
 
   const router = useRouter();
   return (
@@ -62,23 +62,25 @@ function MyJob({ job }: JobProps) {
               ))}
             </div>
           </div>
-          <div className="self-end">
-            <Button variant="ghost" size="icon" className="text-gray-500">
-              <Pencil size={14} />
-              <span className="sr-only">Edit job</span>
-            </Button>
+          {job.createdBy._id === userProfile?._id && (
+            <div className="self-end">
+              <Button variant="ghost" size="icon" className="text-gray-500">
+                <Pencil size={14} />
+                <span className="sr-only">Edit job</span>
+              </Button>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-gray-500
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-gray-500
                 hover:text-red-500"
-              onClick={() => deleteJob(job._id)}
-            >
-              <Trash size={14} />
-              <span className="sr-only">Delete job</span>
-            </Button>
-          </div>
+                onClick={() => deleteJob(job._id)}
+              >
+                <Trash size={14} />
+                <span className="sr-only">Delete job</span>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

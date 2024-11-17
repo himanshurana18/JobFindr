@@ -12,6 +12,7 @@ interface Job {
   skills: string[];
   applicants: string[];
   createdBy: {
+    _id: string;
     profilePicture: string;
     name: string;
   };
