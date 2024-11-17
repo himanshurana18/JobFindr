@@ -9,13 +9,15 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Pencil, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useGlobalContext } from "@/context/globalContext";
 
 interface JobProps {
   job: Job;
 }
 
 function MyJob({ job }: JobProps) {
-  const { deleteJob, userProfile } = useJobsContext();
+  const { deleteJob } = useJobsContext();
+  const { userProfile } = useGlobalContext();
 
   const router = useRouter();
   return (
