@@ -21,6 +21,9 @@ const config = {
   routes: {
     postLogoutRedirect: process.env.CLIENT_URL,
     callback: "/callback",
+    login: "/login",
+    logout: "/logout",
+    callback: "/callback",
   },
 };
 
