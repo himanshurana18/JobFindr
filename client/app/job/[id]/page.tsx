@@ -100,7 +100,7 @@ function page() {
                 onClick={() => {
                   isAuthenticated
                     ? handleLike(job._id)
-                    : router.push("http://localhost:8000/login");
+                    : router.push("https://jobfindr-q1cl.onrender.com/login");
                 }}
               >
                 {isLiked ? bookmark : bookmarkEmpty}
@@ -176,7 +176,7 @@ function page() {
                   toast.error("You have already applied to this job");
                 }
               } else {
-                router.push("http://localhost:8000/login");
+                router.push("https://jobfindr-q1cl.onrender.com/login");
               }
             }}
           >

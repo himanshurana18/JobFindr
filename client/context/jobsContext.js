@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 
 const JobsContext = createContext();
 
-axios.defaults.baseURL = "http://localhost:8000";
+axios.defaults.baseURL = "https://jobfindr-q1cl.onrender.com";
 axios.defaults.withCredentials = true;
 
 export const JobsContextProvider = ({ children }) => {
