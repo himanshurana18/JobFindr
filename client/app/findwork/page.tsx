@@ -1,5 +1,6 @@
 "use client";
 import Filters from "@/Components/Filters";
+import Footer from "@/Components/Footer";
 import Header from "@/Components/Header";
 import JobCard from "@/Components/JobItem/JobCard";
 import SearchForm from "@/Components/SearchForm";
@@ -43,7 +44,7 @@ function page() {
       : jobs;
 
   return (
-    <div>
+    <main>
       <Header />
 
       <div className="relative px-16 bg-[#D7DEDC] overflow-hidden">
@@ -117,7 +118,9 @@ function page() {
           </div>
         </div>
       </div>
-    </div>
+
+      <Footer />
+    </main>
   );
 }
 

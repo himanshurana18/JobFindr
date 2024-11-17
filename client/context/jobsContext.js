@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useGlobalContext } from "./globalContext";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const JobsContext = createContext();
 
@@ -10,6 +11,7 @@ axios.defaults.withCredentials = true;
 
 export const JobsContextProvider = ({ children }) => {
   const { userProfile } = useGlobalContext();
+  const router = useRouter();
 
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -61,6 +63,11 @@ export const JobsContextProvider = ({ children }) => {
       if (userProfile._id) {
         setUserJobs((prevUserJobs) => [res.data, ...prevUserJobs]);
       }
+
+      getUserJobs(userProfile._id);
+
+      // redirect to the job details page
+      router.push(`/jobs/${res.data._id}`);
     } catch (error) {
       console.log("Error creating job", error);
     }
