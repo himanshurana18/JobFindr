@@ -64,7 +64,7 @@ export const JobsContextProvider = ({ children }) => {
         await getUserJobs(userProfile._id);
       }
 
-      await getUserProfile(userProfile.auth0Id);
+      await getJobs();
       // redirect to the job details page
       router.push(`/job/${res.data._id}`);
     } catch (error) {
