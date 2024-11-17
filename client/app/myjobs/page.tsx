@@ -14,7 +14,7 @@ function page() {
 
   const [activeTab, setActiveTab] = React.useState("posts");
 
-  const userId = userProfile?.id;
+  const userId = userProfile?._id;
 
   const router = useRouter();
 
