@@ -1,7 +1,6 @@
 "use client";
 import { useGlobalContext } from "@/context/globalContext";
 import React from "react";
-import ReactQuill from "react-quill-new";
 import { Label } from "../ui/label";
 import "react-quill-new/dist/quill.snow.css";
 import { Separator } from "../ui/separator";
@@ -14,6 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import dynamic from "next/dynamic";
+
+const ReactQuill = dynamic(() => import("react-quill-new"), {
+  ssr: false,
+});
 
 function MyEditor() {
   const { setJobDescription, jobDescription } = useGlobalContext();
