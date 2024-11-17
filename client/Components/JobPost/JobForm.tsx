@@ -18,6 +18,7 @@ function JobForm() {
     skills,
     negotiable,
     tags,
+    resetJobForm,
   } = useGlobalContext();
   const { createJob } = useJobsContext();
 
@@ -72,11 +73,15 @@ function JobForm() {
       salaryType,
       jobType: activeEmploymentTypes,
       salary,
-      location: `${location.address}, ${location.city}, ${location.country}`,
+      location: `${location.address ? location.address + ", " : ""}${
+        location.city ? location.city + ", " : ""
+      }${location.country}`,
       skills,
       negotiable,
       tags,
     });
+
+    resetJobForm();
   };
 
   return (
