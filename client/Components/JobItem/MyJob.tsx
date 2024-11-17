@@ -18,7 +18,7 @@ interface JobProps {
 
 function MyJob({ job }: JobProps) {
   const { deleteJob, likeJob } = useJobsContext();
-  const { userProfile, isAuthenticated } = useGlobalContext();
+  const { userProfile, isAuthenticated, getUserProfile } = useGlobalContext();
   const [isLiked, setIsLiked] = React.useState(false);
 
   const router = useRouter();
@@ -29,7 +29,15 @@ function MyJob({ job }: JobProps) {
   };
 
   useEffect(() => {
-    setIsLiked(job.likes.includes(userProfile._id));
+    if (isAuthenticated && job.createdBy._id) {
+      getUserProfile(job.createdBy._id);
+    }
+  }, [isAuthenticated, job.createdBy._id]);
+
+  useEffect(() => {
+    if (userProfile?._id) {
+      setIsLiked(job.likes.includes(userProfile?._id));
+    }
   }, [job.likes, userProfile._id]);
 
   return (
