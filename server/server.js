@@ -25,12 +25,24 @@ const config = {
     logout: "/logout",
     callback: "/callback",
   },
+  session: {
+    absoluteDuration: 24 * 60 * 60, // 24 hours
+    cookie: {
+      domain: ".onrender.com", // Adjust based on your domain
+      secure: true,
+      sameSite: "none",
+    },
+  },
 };
 
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
     credentials: true,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: ["set-cookie"],
   })
 );
 
