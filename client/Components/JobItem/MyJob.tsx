@@ -29,7 +29,7 @@ function MyJob({ job }: JobProps) {
           src={job.createdBy.profilePicture || "/user.png"}
           width={48}
           height={48}
-          className="rounded-full"
+          className="rounded-full shadow-sm"
         />
 
         <div>

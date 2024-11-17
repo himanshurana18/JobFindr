@@ -110,9 +110,7 @@ function page() {
               ))
             ) : (
               <div className="mt-1 flex items-center">
-                <p className="text-2xl text-gray-400 font-bold">
-                  No Jobs Found!
-                </p>
+                <p className="text-2xl font-bold">No Jobs Found!</p>
               </div>
             )}
           </div>

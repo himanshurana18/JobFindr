@@ -16,12 +16,8 @@ interface EmployementTypeProps {
 }
 
 function JobTitle() {
-  const {
-    handleTitleChange,
-    jobTitle,
-    activeEmploymentTypes,
-    setActiveEmploymentTypes,
-  } = useGlobalContext();
+  const { handleTitleChange, jobTitle, setActiveEmploymentTypes } =
+    useGlobalContext();
 
   const [employmentTypes, setEmploymentTypes] =
     React.useState<EmployementTypeProps>({

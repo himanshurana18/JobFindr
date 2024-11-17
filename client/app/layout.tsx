@@ -1,5 +1,3 @@
-import type { Metadata } from "next";
-
 import "./globals.css";
 import ContextProvider from "@/providers/ContextProvider";
 import { Roboto } from "next/font/google";

@@ -2,7 +2,7 @@
 import { useGlobalContext } from "@/context/globalContext";
 import { useJobsContext } from "@/context/jobsContext";
 import { Job } from "@/types/types";
-import { Bookmark, Calendar } from "lucide-react";
+import { Calendar } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
@@ -23,7 +23,7 @@ function JobCard({ job, activeJob }: JobProps) {
 
   const {
     title,
-    location,
+
     salaryType,
     salary,
     createdBy,
