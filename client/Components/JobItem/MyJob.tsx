@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Job } from "@/types/types";
-import { useJobsContext } from "@/context/jobsContext";
+import { useJobs } from "@/context/jobsContext";
 import Image from "next/image";
 import { CardTitle } from "../ui/card";
 import { formatDates } from "@/utils/fotmatDates";
@@ -9,7 +9,7 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Pencil, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useGlobalContext } from "@/context/globalContext";
+import { useAuth } from "@/context/authContext";
 import { bookmark, bookmarkEmpty } from "@/utils/Icons";
 
 interface JobProps {
@@ -17,39 +17,34 @@ interface JobProps {
 }
 
 function MyJob({ job }: JobProps) {
-  const { deleteJob, likeJob } = useJobsContext();
-  const { userProfile, isAuthenticated, getUserProfile } = useGlobalContext();
-  const [isLiked, setIsLiked] = React.useState(false);
+  const { deleteJob, likeJob } = useJobs();
+  const { profile, user } = useAuth();
+  const [isLiked, setIsLiked] = useState(false);
 
   const router = useRouter();
 
   const handleLike = (id: string) => {
+    if (!user) return;
     setIsLiked((prev) => !prev);
     likeJob(id);
   };
 
   useEffect(() => {
-    if (isAuthenticated && job.createdBy._id) {
-      getUserProfile(job.createdBy._id);
+    if (profile?.id) {
+      setIsLiked(job.likes.includes(profile.id));
     }
-  }, [isAuthenticated, job.createdBy._id]);
-
-  useEffect(() => {
-    if (userProfile?._id) {
-      setIsLiked(job.likes.includes(userProfile?._id));
-    }
-  }, [job.likes, userProfile._id]);
+  }, [job.likes, profile?.id]);
 
   return (
     <div className="p-8 bg-white rounded-xl flex flex-col gap-5">
       <div className="flex justify-between">
         <div
           className="flex items-center space-x-4 mb-2 cursor-pointer"
-          onClick={() => router.push(`/job/${job._id}`)}
+          onClick={() => router.push(`/job/${job.id}`)}
         >
           <Image
             alt={`logo`}
-            src={job.createdBy.profilePicture || "/user.png"}
+            src={job.profiles?.profile_picture || "/user.png"}
             width={48}
             height={48}
             className="rounded-full shadow-sm"
@@ -60,7 +55,7 @@ function MyJob({ job }: JobProps) {
               {job.title}
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              {job.createdBy.name}
+              {job.profiles?.name}
             </p>
           </div>
         </div>
@@ -68,11 +63,7 @@ function MyJob({ job }: JobProps) {
           className={`text-2xl ${
             isLiked ? "text-[#7263f3]" : "text-gray-400"
           } `}
-          onClick={() => {
-            isAuthenticated
-              ? handleLike(job._id)
-              : router.push("https://jobfindr-q1cl.onrender.com/login");
-          }}
+          onClick={() => handleLike(job.id)}
         >
           {isLiked ? bookmark : bookmarkEmpty}
         </button>
@@ -80,7 +71,7 @@ function MyJob({ job }: JobProps) {
       <div>
         <p className="text-sm text-muted-foreground mb-2">{job.location}</p>
         <p className="text-sm text-muted-foreground mb-4">
-          Posted {formatDates(job.createdAt)}
+          Posted {formatDates(job.created_at)}
         </p>
 
         <div className="flex justify-between">
@@ -100,7 +91,7 @@ function MyJob({ job }: JobProps) {
               ))}
             </div>
           </div>
-          {job.createdBy._id === userProfile?._id && (
+          {job.created_by === profile?.id && (
             <div className="self-end">
               <Button variant="ghost" size="icon" className="text-gray-500">
                 <Pencil size={14} />
@@ -110,9 +101,8 @@ function MyJob({ job }: JobProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-gray-500
-                hover:text-red-500"
-                onClick={() => deleteJob(job._id)}
+                className="text-gray-500 hover:text-red-500"
+                onClick={() => deleteJob(job.id)}
               >
                 <Trash size={14} />
                 <span className="sr-only">Delete job</span>

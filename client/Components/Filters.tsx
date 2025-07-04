@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Button } from "./ui/button";
-import { useJobsContext } from "@/context/jobsContext";
+import { useJobs } from "@/context/jobsContext";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
 import { Slider } from "./ui/slider";
@@ -18,7 +18,7 @@ function Filters() {
     setMaxSalary,
     searchJobs,
     setSearchQuery,
-  } = useJobsContext();
+  } = useJobs();
 
   const clearAllFilters = () => {
     setFilters({

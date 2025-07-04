@@ -10,26 +10,23 @@ import {
 } from "@/Components/ui/dropdown-menu";
 import { Settings, LogOut } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useGlobalContext } from "@/context/globalContext";
+import { useAuth } from "@/context/authContext";
 import { Badge } from "./ui/badge";
 
 function Profile() {
-  const { userProfile } = useGlobalContext();
+  const { profile, signOut } = useAuth();
 
-  const { profilePicture, name, profession, email } = userProfile;
+  if (!profile) return null;
 
-  // Use environment variable for API URL, fallback to localhost for development
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const { profile_picture, name, profession, email } = profile;
 
-  const router = useRouter();
   return (
     <DropdownMenu>
       <div className="flex items-center gap-4">
-        <Badge>{profession}</Badge>
+        <Badge>{profession || 'Job Seeker'}</Badge>
         <DropdownMenuTrigger asChild className="cursor-pointer">
           <Image
-            src={profilePicture ? profilePicture : "/user.png"}
+            src={profile_picture || "/user.png"}
             alt="avatar"
             width={36}
             height={36}
@@ -55,9 +52,7 @@ function Profile() {
         </DropdownMenuItem>
         <DropdownMenuItem
           className="cursor-pointer"
-          onClick={() => {
-            window.location.href = `${API_BASE_URL}/logout`;
-          }}
+          onClick={() => signOut()}
         >
           <LogOut className="mr-2 h-4 w-4" />
           <span>Logout</span>

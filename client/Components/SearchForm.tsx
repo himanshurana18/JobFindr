@@ -1,11 +1,11 @@
 "use client";
-import { useJobsContext } from "@/context/jobsContext";
+import { useJobs } from "@/context/jobsContext";
 import { location } from "@/utils/Icons";
 import { Search } from "lucide-react";
 import React from "react";
 
 function SearchForm() {
-  const { searchJobs, handleSearchChange, searchQuery } = useJobsContext();
+  const { searchJobs, handleSearchChange, searchQuery } = useJobs();
   return (
     <form
       className="relative flex items-center"

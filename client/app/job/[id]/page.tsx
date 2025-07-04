@@ -2,42 +2,40 @@
 import Footer from "@/Components/Footer";
 import Header from "@/Components/Header";
 import JobCard from "@/Components/JobItem/JobCard";
-import { useGlobalContext } from "@/context/globalContext";
-import { useJobsContext } from "@/context/jobsContext";
+import { useAuth } from "@/context/authContext";
+import { useJobs } from "@/context/jobsContext";
 import { Job } from "@/types/types";
 import formatMoney from "@/utils/formatMoney";
 import { formatDates } from "@/utils/fotmatDates";
-import { Bookmark } from "lucide-react";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import { useParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { bookmark, bookmarkEmpty } from "@/utils/Icons";
 
 function page() {
-  const { jobs, likeJob, applyToJob } = useJobsContext();
-  const { userProfile, isAuthenticated } = useGlobalContext();
+  const { jobs, likeJob, applyToJob } = useJobs();
+  const { user, profile } = useAuth();
   const params = useParams();
-  const router = useRouter();
   const { id } = params;
 
-  const [isLiked, setIsLiked] = React.useState(false);
-  const [isApplied, setIsApplied] = React.useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isApplied, setIsApplied] = useState(false);
 
-  const job = jobs.find((job: Job) => job._id === id);
-  const otherJobs = jobs.filter((job: Job) => job._id !== id);
-
-  useEffect(() => {
-    if (job) {
-      setIsApplied(job.applicants.includes(userProfile._id));
-    }
-  }, [job, userProfile._id]);
+  const job = jobs.find((job: Job) => job.id === id);
+  const otherJobs = jobs.filter((job: Job) => job.id !== id);
 
   useEffect(() => {
-    if (job) {
-      setIsLiked(job.likes.includes(userProfile._id));
+    if (job && profile?.id) {
+      setIsApplied(job.applicants.includes(profile.id));
     }
-  }, [job, userProfile._id]);
+  }, [job, profile?.id]);
+
+  useEffect(() => {
+    if (job && profile?.id) {
+      setIsLiked(job.likes.includes(profile.id));
+    }
+  }, [job, profile?.id]);
 
   if (!job) return null;
 
@@ -46,17 +44,21 @@ function page() {
     location,
     description,
     salary,
-    createdBy,
+    profiles,
     applicants,
-    jobType,
-    createdAt,
-    salaryType,
+    job_type,
+    created_at,
+    salary_type,
     negotiable,
   } = job;
 
-  const { name, profilePicture } = createdBy;
+  const { name, profile_picture } = profiles || {};
 
   const handleLike = (id: string) => {
+    if (!user) {
+      toast.error('Please sign in to like jobs');
+      return;
+    }
     setIsLiked((prev) => !prev);
     likeJob(id);
   };
@@ -70,7 +72,7 @@ function page() {
           <JobCard activeJob job={job} />
 
           {otherJobs.map((job: Job) => (
-            <JobCard job={job} key={job._id} />
+            <JobCard job={job} key={job.id} />
           ))}
         </div>
 
@@ -80,7 +82,7 @@ function page() {
               <div className="flex items-center gap-2">
                 <div className="w-14 h-14 relative overflow-hidden rounded-md flex items-center justify-center bg-gray-200">
                   <Image
-                    src={profilePicture || "/user.png"}
+                    src={profile_picture || "/user.png"}
                     alt={name || "User"}
                     width={45}
                     height={45}
@@ -97,11 +99,7 @@ function page() {
                 className={`text-2xl  ${
                   isLiked ? "text-[#7263f3]" : "text-gray-400"
                 }`}
-                onClick={() => {
-                  isAuthenticated
-                    ? handleLike(job._id)
-                    : router.push("https://jobfindr-q1cl.onrender.com/login");
-                }}
+                onClick={() => handleLike(job.id)}
               >
                 {isLiked ? bookmark : bookmarkEmpty}
               </button>
@@ -122,13 +120,13 @@ function page() {
                   </span>
                   <span className="font-medium text-gray-500 text-lg">
                     /
-                    {salaryType
+                    {salary_type
                       ? `${
-                          salaryType === "Yearly"
+                          salary_type === "Yearly"
                             ? "pa"
-                            : salaryType === "Monthly"
+                            : salary_type === "Monthly"
                             ? "pcm"
-                            : salaryType === "Weekly"
+                            : salary_type === "Weekly"
                             ? "pw"
                             : "ph"
                         }`
@@ -139,7 +137,7 @@ function page() {
 
               <p className="flex-1 py-2 px-4 flex flex-col items-center justify-center gap-1 bg-purple-500/20 rounded-xl">
                 <span className="text-sm">Posted</span>
-                <span className="font-bold">{formatDates(createdAt)}</span>
+                <span className="font-bold">{formatDates(created_at)}</span>
               </p>
 
               <p className="flex-1 py-2 px-4 flex flex-col items-center justify-center gap-1 bg-blue-500/20 rounded-xl">
@@ -149,7 +147,7 @@ function page() {
 
               <p className="flex-1 py-2 px-4 flex flex-col items-center justify-center gap-1 bg-yellow-500/20 rounded-xl">
                 <span className="text-sm">Job Type</span>
-                <span className="font-bold">{jobType[0]}</span>
+                <span className="font-bold">{job_type[0]}</span>
               </p>
             </div>
 
@@ -168,15 +166,15 @@ function page() {
               isApplied ? "bg-green-500" : "bg-[#7263f3]"
             }`}
             onClick={() => {
-              if (isAuthenticated) {
+              if (user) {
                 if (!isApplied) {
-                  applyToJob(job._id);
+                  applyToJob(job.id);
                   setIsApplied(true);
                 } else {
                   toast.error("You have already applied to this job");
                 }
               } else {
-                router.push("https://jobfindr-q1cl.onrender.com/login");
+                toast.error('Please sign in to apply for jobs');
               }
             }}
           >
@@ -189,7 +187,7 @@ function page() {
             <div className="flex flex-col gap-2">
               <p>
                 <span className="font-bold">Posted:</span>{" "}
-                {formatDates(createdAt)}
+                {formatDates(created_at)}
               </p>
 
               <p>
@@ -208,7 +206,7 @@ function page() {
               </p>
 
               <p>
-                <span className="font-bold">Job Type:</span> {jobType[0]}
+                <span className="font-bold">Job Type:</span> {job_type[0]}
               </p>
             </div>
           </div>

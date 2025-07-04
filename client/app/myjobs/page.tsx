@@ -2,31 +2,31 @@
 import Footer from "@/Components/Footer";
 import Header from "@/Components/Header";
 import MyJob from "@/Components/JobItem/MyJob";
-import { useGlobalContext } from "@/context/globalContext";
-import { useJobsContext } from "@/context/jobsContext";
+import { useAuth } from "@/context/authContext";
+import { useJobs } from "@/context/jobsContext";
 import { Job } from "@/types/types";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 function page() {
-  const { userJobs, jobs } = useJobsContext();
-  const { isAuthenticated, loading, userProfile } = useGlobalContext();
+  const { userJobs, jobs } = useJobs();
+  const { user, loading, profile } = useAuth();
 
   const [activeTab, setActiveTab] = React.useState("posts");
 
-  const userId = userProfile?._id;
+  const userId = profile?.id;
 
   const router = useRouter();
 
   // Redirect to login if not authenticated
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.push("https://jobfindr-q1cl.onrender.com/login");
+    if (!loading && !user) {
+      router.push("/");
     }
-  }, [isAuthenticated]);
+  }, [user, loading]);
 
   const likedJobs = jobs.filter((job: Job) => {
-    return job.likes.includes(userId);
+    return job.likes.includes(userId || '');
   });
 
   if (loading) {
@@ -77,10 +77,10 @@ function page() {
 
         <div className="my-8 grid grid-cols-2 gap-6">
           {activeTab === "posts" &&
-            userJobs.map((job: Job) => <MyJob key={job._id} job={job} />)}
+            userJobs.map((job: Job) => <MyJob key={job.id} job={job} />)}
 
           {activeTab === "likes" &&
-            likedJobs.map((job: Job) => <MyJob key={job._id} job={job} />)}
+            likedJobs.map((job: Job) => <MyJob key={job.id} job={job} />)}
         </div>
       </div>
 

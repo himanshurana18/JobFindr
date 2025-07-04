@@ -1,11 +1,11 @@
 "use client";
-import { useGlobalContext } from "@/context/globalContext";
-import { useJobsContext } from "@/context/jobsContext";
+import { useAuth } from "@/context/authContext";
+import { useJobs } from "@/context/jobsContext";
 import { Job } from "@/types/types";
 import { Calendar } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Separator } from "../ui/separator";
 import formatMoney from "@/utils/formatMoney";
 import { formatDates } from "@/utils/fotmatDates";
@@ -17,37 +17,38 @@ interface JobProps {
 }
 
 function JobCard({ job, activeJob }: JobProps) {
-  const { likeJob } = useJobsContext();
-  const { userProfile, isAuthenticated } = useGlobalContext();
-  const [isLiked, setIsLiked] = React.useState(false);
+  const { likeJob } = useJobs();
+  const { user, profile } = useAuth();
+  const [isLiked, setIsLiked] = useState(false);
 
   const {
     title,
-    salaryType,
+    salary_type,
     salary,
-    createdBy,
+    profiles,
     applicants,
-    jobType,
-    createdAt,
+    job_type,
+    created_at,
   } = job;
 
-  const { name, profilePicture } = createdBy;
-
-  // Use environment variable for API URL, fallback to localhost for development
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const { name, profile_picture } = profiles || {};
 
   const router = useRouter();
 
   const handleLike = (id: string) => {
+    if (!user) {
+      // Open auth modal instead of redirecting
+      return;
+    }
     setIsLiked((prev) => !prev);
     likeJob(id);
   };
 
   useEffect(() => {
-    if (userProfile?._id) {
-      setIsLiked(job.likes.includes(userProfile._id));
+    if (profile?.id) {
+      setIsLiked(job.likes.includes(profile.id));
     }
-  }, [job.likes, userProfile._id]);
+  }, [job.likes, profile?.id]);
 
   const companyDescription =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget nunc.";
@@ -79,11 +80,11 @@ function JobCard({ job, activeJob }: JobProps) {
       <div className="flex justify-between">
         <div
           className="group flex gap-1 items-center cursor-pointer"
-          onClick={() => router.push(`/job/${job._id}`)}
+          onClick={() => router.push(`/job/${job.id}`)}
         >
           <div className="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center">
             <Image
-              src={profilePicture || "/user.png"}
+              src={profile_picture || "/user.png"}
               alt={name || "User"}
               width={40}
               height={40}
@@ -104,18 +105,14 @@ function JobCard({ job, activeJob }: JobProps) {
           className={`text-2xl ${
             isLiked ? "text-[#7263f3]" : "text-gray-400"
           } `}
-          onClick={() => {
-            isAuthenticated
-              ? handleLike(job._id)
-              : (window.location.href = `${API_BASE_URL}/login`);
-          }}
+          onClick={() => handleLike(job.id)}
         >
           {isLiked ? bookmark : bookmarkEmpty}
         </button>
       </div>
 
       <div className="flex items-center gap-2">
-        {jobType.map((type, index) => (
+        {job_type.map((type, index) => (
           <span
             key={index}
             className={`py-1 px-3 text-xs font-medium rounded-md border ${jobTypeBg(
@@ -140,11 +137,11 @@ function JobCard({ job, activeJob }: JobProps) {
           <span className="font-bold">{formatMoney(salary, "GBP")}</span>
           <span className="font-medium text-gray-400 text-lg">
             /
-            {salaryType === "Yearly"
+            {salary_type === "Yearly"
               ? "pa"
-              : salaryType === "Monthly"
+              : salary_type === "Monthly"
               ? "pcm"
-              : salaryType === "Weekly"
+              : salary_type === "Weekly"
               ? "pw"
               : "ph"}
           </span>
@@ -154,7 +151,7 @@ function JobCard({ job, activeJob }: JobProps) {
           <span className="text-lg">
             <Calendar size={16} />
           </span>
-          Posted: {formatDates(createdAt)}
+          Posted: {formatDates(created_at)}
         </p>
       </div>
     </div>

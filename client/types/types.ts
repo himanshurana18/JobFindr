@@ -1,22 +1,36 @@
 interface Job {
-  _id: string;
+  id: string;
   title: string;
   description: string;
   location: string;
   salary: number;
-  salaryType: "Yearly" | "Monthly" | "Weekly" | "Hourly";
+  salary_type: "Yearly" | "Monthly" | "Weekly" | "Hourly";
   negotiable: boolean;
-  jobType: string[];
+  job_type: string[];
   tags: string[];
   likes: string[];
   skills: string[];
   applicants: string[];
-  createdBy: {
-    _id: string;
-    profilePicture: string;
-    name: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  profiles?: {
+    id: string;
+    name: string | null;
+    profile_picture: string | null;
   };
-  createdAt: string;
-  updatedAt: string;
 }
-export type { Job };
+
+interface Profile {
+  id: string;
+  email: string;
+  name: string | null;
+  profile_picture: string | null;
+  bio: string | null;
+  profession: string | null;
+  role: 'jobseeker' | 'recruiter';
+  created_at: string;
+  updated_at: string;
+}
+
+export type { Job, Profile };

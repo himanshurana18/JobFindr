@@ -1,12 +1,11 @@
 {
-  "name": "jobfindr-fullstack",
+  "name": "jobfindr-supabase",
   "version": "1.0.0",
-  "description": "Job board application with Next.js frontend and Express.js backend",
+  "description": "Job board application with Next.js frontend and Supabase backend",
   "scripts": {
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "cd server && npm run start",
+    "dev": "cd client && npm run dev",
     "client": "cd client && npm run dev",
-    "install-deps": "npm install && cd client && npm install && cd ../server && npm install",
+    "install-deps": "cd client && npm install",
     "build": "cd client && npm run build"
   },
   "devDependencies": {

@@ -1,19 +1,20 @@
 "use client";
 import Header from "@/Components/Header";
 import JobForm from "@/Components/JobPost/JobForm";
-import { useGlobalContext } from "@/context/globalContext";
+import { useAuth } from "@/context/authContext";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 function page() {
-  const { isAuthenticated, loading } = useGlobalContext();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.push("https://jobfindr-q1cl.onrender.com/login");
+    if (!loading && !user) {
+      router.push("/");
     }
-  }, [isAuthenticated]);
+  }, [user, loading]);
+
   return (
     <div className="flex flex-col">
       <Header />

@@ -4,14 +4,14 @@ import Footer from "@/Components/Footer";
 import Header from "@/Components/Header";
 import JobCard from "@/Components/JobItem/JobCard";
 import SearchForm from "@/Components/SearchForm";
-import { useJobsContext } from "@/context/jobsContext";
+import { useJobs } from "@/context/jobsContext";
 import { Job } from "@/types/types";
 import { grip, list, table } from "@/utils/Icons";
 import Image from "next/image";
 import React from "react";
 
 function page() {
-  const { jobs, filters } = useJobsContext();
+  const { jobs, filters } = useJobs();
   const [columns, setColumns] = React.useState(3);
 
   // cycle through 1, 2, 3 columns
@@ -25,15 +25,15 @@ function page() {
     return list;
   };
 
-  const filetredJobs =
-    filters.fullTime || filters.partTime || filters.contract || filters.internet
+  const filteredJobs =
+    filters.fullTime || filters.partTime || filters.contract || filters.internship
       ? jobs.filter((job: Job) => {
-          if (filters.fullTime && job.jobType.includes("Full Time"))
+          if (filters.fullTime && job.job_type.includes("Full Time"))
             return true;
-          if (filters.partTime && job.jobType.includes("Part Time"))
+          if (filters.partTime && job.job_type.includes("Part Time"))
             return true;
-          if (filters.contract && job.jobType.includes("Contract")) return true;
-          if (filters.internship && job.jobType.includes("Internship"))
+          if (filters.contract && job.job_type.includes("Contract")) return true;
+          if (filters.internship && job.job_type.includes("Internship"))
             return true;
 
           if (filters.fullStack && job.tags.includes("Full Stack")) return true;
@@ -105,8 +105,8 @@ function page() {
             }`}
           >
             {jobs.length > 0 ? (
-              filetredJobs.map((job: Job) => (
-                <JobCard key={job._id} job={job} />
+              filteredJobs.map((job: Job) => (
+                <JobCard key={job.id} job={job} />
               ))
             ) : (
               <div className="mt-1 flex items-center">

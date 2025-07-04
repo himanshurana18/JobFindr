@@ -1,15 +1,16 @@
-# JobFindr - Full Stack Job Board Application
+# JobFindr - Supabase Job Board Application
 
-A modern job board application built with Next.js frontend and Express.js backend, featuring Auth0 authentication and MongoDB database.
+A modern job board application built with Next.js frontend and Supabase backend, featuring email/password authentication and real-time data management.
 
 ## Features
 
-- 🔐 Auth0 Authentication
+- 🔐 Supabase Authentication (Email/Password)
 - 💼 Job posting and management
 - 🔍 Advanced job search and filtering
 - 👤 User profiles and job applications
 - 📱 Responsive design with Tailwind CSS
 - 🎨 Modern UI with shadcn/ui components
+- ⚡ Real-time updates with Supabase
 
 ## Tech Stack
 
@@ -19,92 +20,36 @@ A modern job board application built with Next.js frontend and Express.js backen
 - TypeScript
 - Tailwind CSS
 - shadcn/ui components
-- Axios for API calls
+- Supabase Client
 
 ### Backend
-- Node.js
-- Express.js
-- MongoDB with Mongoose
-- Auth0 for authentication
-- CORS enabled
+- Supabase (Database + Authentication + Real-time)
+- PostgreSQL
+- Row Level Security (RLS)
 
 ## Prerequisites
 
 Before running this project, make sure you have:
 
 - Node.js (v18 or higher)
-- MongoDB (local installation or MongoDB Atlas)
-- Auth0 account for authentication setup
+- A Supabase account
 
 ## Setup Instructions
 
 ### 1. Clone and Install Dependencies
 
 ```bash
-# Install root dependencies
-npm install
-
-# Install all project dependencies
+# Install dependencies
 npm run install-deps
 ```
 
-### 2. Database Setup
+### 2. Supabase Setup
 
-**Option A: Local MongoDB**
-1. Install MongoDB locally
-2. Start MongoDB service
-3. Use connection string: `mongodb://localhost:27017/jobfindr`
+1. Create a new project at [supabase.com](https://supabase.com)
+2. Go to Settings > API to get your project URL and anon key
+3. Go to SQL Editor and run the migration file from `supabase/migrations/001_initial_schema.sql`
 
-**Option B: MongoDB Atlas**
-1. Create a MongoDB Atlas account
-2. Create a new cluster
-3. Get your connection string
-4. Replace the MONGO_URI in your .env file
-
-### 3. Auth0 Setup
-
-1. Create an Auth0 account at [auth0.com](https://auth0.com)
-2. Create a new application (Regular Web Application)
-3. Configure the following settings in your Auth0 dashboard:
-
-**Allowed Callback URLs:**
-```
-http://localhost:5000/callback
-```
-
-**Allowed Logout URLs:**
-```
-http://localhost:3000
-```
-
-**Allowed Web Origins:**
-```
-http://localhost:3000
-```
-
-4. Note down your:
-   - Domain
-   - Client ID
-   - Client Secret
-
-### 4. Environment Configuration
-
-**Server Environment (.env in server folder):**
-```bash
-# Copy the example file
-cp server/.env.example server/.env
-```
-
-Fill in your actual values:
-```env
-MONGO_URI=mongodb://localhost:27017/jobfindr
-SECRET=your-super-secret-key-here-make-it-long-and-random
-BASE_URL=http://localhost:5000
-CLIENT_ID=your-auth0-client-id
-ISSUER_BASE_URL=https://your-domain.auth0.com
-CLIENT_URL=http://localhost:3000
-PORT=5000
-```
+### 3. Environment Configuration
 
 **Client Environment (.env.local in client folder):**
 ```bash
@@ -112,31 +57,29 @@ PORT=5000
 cp client/.env.local.example client/.env.local
 ```
 
-Fill in:
+Fill in your Supabase credentials:
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:5000
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 ```
+
+### 4. Database Setup
+
+The database schema is automatically created when you run the migration file. It includes:
+
+- **profiles** table for user information
+- **jobs** table for job listings
+- Row Level Security (RLS) policies
+- Automatic profile creation on user signup
 
 ### 5. Run the Application
 
 ```bash
-# Start both frontend and backend concurrently
+# Start the development server
 npm run dev
 ```
 
-This will start:
-- Backend server on http://localhost:5000
-- Frontend application on http://localhost:3000
-
-### 6. Alternative: Run Separately
-
-```bash
-# Terminal 1 - Backend
-npm run server
-
-# Terminal 2 - Frontend  
-npm run client
-```
+This will start the frontend application on http://localhost:3000
 
 ## Project Structure
 
@@ -146,64 +89,97 @@ jobfindr/
 │   ├── app/               # App router pages
 │   ├── Components/        # React components
 │   ├── context/          # React context providers
-│   ├── utils/            # Utility functions
-│   └── types/            # TypeScript types
-├── server/                # Express.js backend
-│   ├── controllers/      # Route controllers
-│   ├── models/          # MongoDB models
-│   ├── routes/          # API routes
-│   ├── middleware/      # Custom middleware
-│   └── db/              # Database connection
+│   ├── lib/              # Supabase client
+│   ├── types/            # TypeScript types
+│   └── utils/            # Utility functions
+├── supabase/              # Database migrations
+│   └── migrations/       # SQL migration files
 └── package.json          # Root package.json
 ```
 
-## API Endpoints
+## Database Schema
 
-### Authentication
-- `GET /api/v1/check-auth` - Check authentication status
-- `GET /login` - Auth0 login
-- `GET /logout` - Auth0 logout
+### Profiles Table
+- User information and preferences
+- Linked to Supabase Auth users
+- Supports job seekers and recruiters
+
+### Jobs Table
+- Job listings with full details
+- Support for multiple job types and tags
+- Like and application tracking
+- Salary information with different types
+
+## Authentication
+
+The app uses Supabase Auth with:
+- Email/password authentication
+- Automatic profile creation on signup
+- Session management
+- Protected routes
+
+## API Operations
+
+All data operations are handled through Supabase client:
 
 ### Jobs
-- `GET /api/v1/jobs` - Get all jobs
-- `POST /api/v1/jobs` - Create new job (protected)
-- `GET /api/v1/jobs/:id` - Get job by ID
-- `PUT /api/v1/jobs/like/:id` - Like/unlike job (protected)
-- `PUT /api/v1/jobs/apply/:id` - Apply to job (protected)
-- `DELETE /api/v1/jobs/:id` - Delete job (protected)
-- `GET /api/v1/jobs/search` - Search jobs
-- `GET /api/v1/jobs/user/:id` - Get user's jobs (protected)
+- Create, read, update, delete jobs
+- Search and filter functionality
+- Like/unlike jobs
+- Apply to jobs
+- Real-time updates
 
-### Users
-- `GET /api/v1/user/:id` - Get user profile
+### Profiles
+- User profile management
+- Role-based access (job seeker/recruiter)
+- Profile picture and bio support
+
+## Security
+
+- Row Level Security (RLS) enabled on all tables
+- Users can only modify their own data
+- Public read access for job listings
+- Authenticated access for applications and likes
+
+## Deployment
+
+### Frontend (Vercel/Netlify)
+1. Connect your repository
+2. Set environment variables
+3. Deploy
+
+### Database
+- Supabase handles all backend infrastructure
+- No additional deployment needed
+
+## Environment Variables
+
+### Required
+- `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anonymous key
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **MongoDB Connection Error**
-   - Ensure MongoDB is running locally or check Atlas connection string
-   - Verify network access in MongoDB Atlas
+1. **Supabase Connection Error**
+   - Verify your project URL and anon key
+   - Check if the project is paused (free tier limitation)
 
-2. **Auth0 Authentication Issues**
-   - Double-check Auth0 configuration URLs
-   - Ensure CLIENT_ID and ISSUER_BASE_URL are correct
-   - Verify callback URLs match exactly
+2. **Authentication Issues**
+   - Ensure email confirmation is disabled in Supabase Auth settings for development
+   - Check RLS policies if data access is denied
 
-3. **CORS Errors**
-   - Ensure CLIENT_URL in server .env matches your frontend URL
-   - Check that credentials are included in requests
-
-4. **Port Conflicts**
-   - Change PORT in server/.env if 5000 is occupied
-   - Update NEXT_PUBLIC_API_URL accordingly
+3. **Database Errors**
+   - Verify the migration was run successfully
+   - Check Supabase logs for detailed error messages
 
 ### Development Tips
 
-- Use browser dev tools to check network requests
-- Check server logs for detailed error messages
-- Ensure both frontend and backend are running
-- Clear browser cache if experiencing auth issues
+- Use Supabase Studio to view and manage your data
+- Check the Network tab in browser dev tools for API calls
+- Enable real-time subscriptions for live updates
+- Use Supabase CLI for local development (optional)
 
 ## Contributing
 

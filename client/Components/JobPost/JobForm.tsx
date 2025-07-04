@@ -5,7 +5,7 @@ import JobTitle from "./JobTitle";
 import JobDetails from "./JobDetails";
 import JobSkills from "./JobSkills ";
 import JobLocation from "./JobLocation";
-import { useJobsContext } from "@/context/jobsContext";
+import { useJobs } from "@/context/jobsContext";
 
 function JobForm() {
   const {
@@ -20,7 +20,7 @@ function JobForm() {
     tags,
     resetJobForm,
   } = useGlobalContext();
-  const { createJob } = useJobsContext();
+  const { createJob } = useJobs();
 
   const sections = ["About", "Job Details", "Skills", "Location", "Summary"];
   const [currentSection, setCurrentSection] = React.useState(sections[0]);
