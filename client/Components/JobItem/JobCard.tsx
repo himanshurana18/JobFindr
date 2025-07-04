@@ -23,7 +23,6 @@ function JobCard({ job, activeJob }: JobProps) {
 
   const {
     title,
-
     salaryType,
     salary,
     createdBy,
@@ -34,6 +33,9 @@ function JobCard({ job, activeJob }: JobProps) {
 
   const { name, profilePicture } = createdBy;
 
+  // Use environment variable for API URL, fallback to localhost for development
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
   const router = useRouter();
 
   const handleLike = (id: string) => {
@@ -42,7 +44,9 @@ function JobCard({ job, activeJob }: JobProps) {
   };
 
   useEffect(() => {
-    setIsLiked(job.likes.includes(userProfile._id));
+    if (userProfile?._id) {
+      setIsLiked(job.likes.includes(userProfile._id));
+    }
   }, [job.likes, userProfile._id]);
 
   const companyDescription =
@@ -103,7 +107,7 @@ function JobCard({ job, activeJob }: JobProps) {
           onClick={() => {
             isAuthenticated
               ? handleLike(job._id)
-              : router.push("https://jobfindr-q1cl.onrender.com/login");
+              : (window.location.href = `${API_BASE_URL}/login`);
           }}
         >
           {isLiked ? bookmark : bookmarkEmpty}

@@ -10,7 +10,10 @@ import { useRouter } from "next/navigation";
 
 const GlobalContext = createContext();
 
-axios.defaults.baseURL = "https://jobfindr-q1cl.onrender.com";
+// Use environment variable for API URL, fallback to localhost for development
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+axios.defaults.baseURL = API_BASE_URL;
 axios.defaults.withCredentials = true;
 
 export const GlobalContextProvider = ({ children }) => {
@@ -44,6 +47,7 @@ export const GlobalContextProvider = ({ children }) => {
         setLoading(false);
       } catch (error) {
         console.log("Error checking auth", error);
+        setIsAuthenticated(false);
       } finally {
         setLoading(false);
       }

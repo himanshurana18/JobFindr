@@ -6,7 +6,10 @@ import { useRouter } from "next/navigation";
 
 const JobsContext = createContext();
 
-axios.defaults.baseURL = "https://jobfindr-q1cl.onrender.com";
+// Use environment variable for API URL, fallback to localhost for development
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+axios.defaults.baseURL = API_BASE_URL;
 axios.defaults.withCredentials = true;
 
 export const JobsContextProvider = ({ children }) => {
@@ -69,6 +72,7 @@ export const JobsContextProvider = ({ children }) => {
       router.push(`/job/${res.data._id}`);
     } catch (error) {
       console.log("Error creating job", error);
+      toast.error("Error creating job");
     }
   };
 
@@ -136,6 +140,7 @@ export const JobsContextProvider = ({ children }) => {
       getJobs();
     } catch (error) {
       console.log("Error liking job", error);
+      toast.error("Please login to like jobs");
     }
   };
 
@@ -155,7 +160,7 @@ export const JobsContextProvider = ({ children }) => {
       getJobs();
     } catch (error) {
       console.log("Error applying to job", error);
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Error applying to job");
     }
   };
 
@@ -169,6 +174,7 @@ export const JobsContextProvider = ({ children }) => {
       toast.success("Job deleted successfully");
     } catch (error) {
       console.log("Error deleting job", error);
+      toast.error("Error deleting job");
     }
   };
 

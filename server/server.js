@@ -29,9 +29,9 @@ const config = {
   session: {
     absoluteDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
     cookie: {
-      domain: "jobfindr-q1cl.onrender.com",
-      secure: true,
-      sameSite: "None",
+      domain: process.env.NODE_ENV === 'production' ? "jobfindr-q1cl.onrender.com" : "localhost",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? "None" : "Lax",
     },
   },
 };
@@ -108,8 +108,8 @@ const server = async () => {
   try {
     await connect();
 
-    app.listen(process.env.PORT, () => {
-      console.log(`Server is running on port ${process.env.PORT}`);
+    app.listen(process.env.PORT || 5000, () => {
+      console.log(`Server is running on port ${process.env.PORT || 5000}`);
     });
   } catch (error) {
     console.log("Server error", error.message);

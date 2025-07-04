@@ -19,6 +19,9 @@ function Profile() {
 
   const { profilePicture, name, profession, email } = userProfile;
 
+  // Use environment variable for API URL, fallback to localhost for development
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
   const router = useRouter();
   return (
     <DropdownMenu>
@@ -53,7 +56,7 @@ function Profile() {
         <DropdownMenuItem
           className="cursor-pointer"
           onClick={() => {
-            router.push("https://jobfindr-q1cl.onrender.com/logout");
+            window.location.href = `${API_BASE_URL}/logout`;
           }}
         >
           <LogOut className="mr-2 h-4 w-4" />
